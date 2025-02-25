@@ -29,34 +29,38 @@ def compress(input_data):
     # Initialize compression structures
     output = bytearray()
     dictionary = {}
-    current_sequence = b''
+    window_start = 0
     
-    # Compression process
-    for byte in input_data:
-        # Try to extend current sequence
-        test_sequence = current_sequence + bytes([byte])
+    for i in range(len(input_data)):
+        # Check substring from window_start to current index
+        current_substring = input_data[window_start:i+1]
         
-        if test_sequence in dictionary:
-            # If sequence exists in dictionary, keep extending
-            current_sequence = test_sequence
-        else:
-            # Output the existing sequence or its reference
-            if current_sequence in dictionary:
-                output.append(dictionary[current_sequence])
-            elif current_sequence:
-                # Literal byte output
-                output.extend(current_sequence)
+        if current_substring not in dictionary:
+            # When we find a new substring
+            # Output the longest match found so far or literal bytes
+            if window_start < i:
+                match_length = i - window_start
+                match_found = False
+                for length in range(match_length, 0, -1):
+                    substring = input_data[window_start:window_start+length]
+                    if substring in dictionary:
+                        # Output a reference to the match
+                        output.extend([dictionary[substring]])
+                        window_start += length
+                        match_found = True
+                        break
+                
+                if not match_found:
+                    # Output literal bytes if no dictionary match
+                    output.extend(input_data[window_start:window_start+1])
+                    window_start += 1
             
-            # Add new sequence to dictionary
-            dictionary[test_sequence] = byte
-            current_sequence = bytes([byte])
+            # Add the new substring to dictionary
+            dictionary[current_substring] = len(dictionary)
     
-    # Handle remaining sequence
-    if current_sequence:
-        if current_sequence in dictionary:
-            output.append(dictionary[current_sequence])
-        else:
-            output.extend(current_sequence)
+    # Handle any remaining bytes
+    if window_start < len(input_data):
+        output.extend(input_data[window_start:])
     
     return bytes(output)
 
@@ -85,27 +89,29 @@ def decompress(compressed_data):
     output = bytearray()
     dictionary = {}
     
-    # Decompression process
-    current_sequence = b''
-    for byte in compressed_data:
-        if byte in dictionary:
-            # If byte is in dictionary, retrieve its sequence
-            decoded_sequence = dictionary[byte]
-            output.extend(decoded_sequence)
+    i = 0
+    while i < len(compressed_data):
+        # Check if current byte is a dictionary reference
+        if compressed_data[i] < len(dictionary):
+            # Retrieve the sequence from dictionary
+            sequence = list(dictionary.keys())[compressed_data[i]]
+            output.extend(sequence)
             
-            if current_sequence:
-                # Extend dictionary with new sequence
-                dictionary[len(dictionary)] = current_sequence + decoded_sequence[:1]
+            # Update dictionary
+            if i > 0:
+                new_sequence = output[-len(sequence)-1:] if len(output) > 0 else sequence
+                dictionary[new_sequence] = len(dictionary)
             
-            current_sequence = decoded_sequence
+            i += 1
         else:
-            # Literal byte or new sequence
-            output.append(byte)
+            # Literal byte
+            output.append(compressed_data[i])
             
-            if current_sequence:
-                # Extend dictionary
-                dictionary[len(dictionary)] = current_sequence + bytes([byte])
+            # Update dictionary
+            if i > 0:
+                new_sequence = output[-2:] if len(output) > 1 else bytes([compressed_data[i]])
+                dictionary[new_sequence] = len(dictionary)
             
-            current_sequence = bytes([byte])
+            i += 1
     
     return bytes(output)
