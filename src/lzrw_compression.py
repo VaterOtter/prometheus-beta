@@ -27,40 +27,38 @@ def compress(input_data):
         return bytes()
     
     # Initialize compression structures
-    output = bytearray()
+    output = []
     dictionary = {}
+    
+    # Sliding window for compression
     window_start = 0
     
-    for i in range(len(input_data)):
-        # Check substring from window_start to current index
-        current_substring = input_data[window_start:i+1]
+    while window_start < len(input_data):
+        # Find the longest match in dictionary
+        match_length = 0
+        match_index = -1
         
-        if current_substring not in dictionary:
-            # When we find a new substring
-            # Output the longest match found so far or literal bytes
-            if window_start < i:
-                match_length = i - window_start
-                match_found = False
-                for length in range(match_length, 0, -1):
-                    substring = input_data[window_start:window_start+length]
-                    if substring in dictionary:
-                        # Output a reference to the match
-                        output.extend([dictionary[substring]])
-                        window_start += length
-                        match_found = True
-                        break
-                
-                if not match_found:
-                    # Output literal bytes if no dictionary match
-                    output.extend(input_data[window_start:window_start+1])
-                    window_start += 1
+        for length in range(min(256, len(input_data) - window_start), 0, -1):
+            substring = input_data[window_start:window_start + length]
             
-            # Add the new substring to dictionary
-            dictionary[current_substring] = len(dictionary)
-    
-    # Handle any remaining bytes
-    if window_start < len(input_data):
-        output.extend(input_data[window_start:])
+            if substring in dictionary:
+                match_length = length
+                match_index = dictionary[substring]
+                break
+        
+        if match_length > 0:
+            # Found a match in dictionary
+            output.append(match_index)
+            window_start += match_length
+        else:
+            # No match, output literal byte
+            output.append(input_data[window_start])
+            window_start += 1
+        
+        # Update dictionary
+        if window_start > 0:
+            new_key = input_data[max(0, window_start-2):window_start]
+            dictionary[new_key] = len(dictionary)
     
     return bytes(output)
 
@@ -86,32 +84,26 @@ def decompress(compressed_data):
         return bytes()
     
     # Initialize decompression structures
-    output = bytearray()
+    output = []
     dictionary = {}
     
-    i = 0
-    while i < len(compressed_data):
-        # Check if current byte is a dictionary reference
-        if compressed_data[i] < len(dictionary):
-            # Retrieve the sequence from dictionary
-            sequence = list(dictionary.keys())[compressed_data[i]]
+    for value in compressed_data:
+        if value < len(dictionary):
+            # Dictionary reference
+            sequence = list(dictionary.keys())[value]
             output.extend(sequence)
             
             # Update dictionary
-            if i > 0:
-                new_sequence = output[-len(sequence)-1:] if len(output) > 0 else sequence
-                dictionary[new_sequence] = len(dictionary)
-            
-            i += 1
+            if output:
+                new_key = bytes(output[-2:]) if len(output) > 1 else bytes([value])
+                dictionary[new_key] = len(dictionary)
         else:
             # Literal byte
-            output.append(compressed_data[i])
+            output.append(value)
             
             # Update dictionary
-            if i > 0:
-                new_sequence = output[-2:] if len(output) > 1 else bytes([compressed_data[i]])
-                dictionary[new_sequence] = len(dictionary)
-            
-            i += 1
+            if len(output) > 1:
+                new_key = bytes(output[-2:])
+                dictionary[new_key] = len(dictionary)
     
     return bytes(output)
