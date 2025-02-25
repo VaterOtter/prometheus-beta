@@ -7,7 +7,7 @@ LZRW is a simple and fast dictionary-based compression algorithm.
 
 def compress(input_data):
     """
-    Compress input data using the LZRW compression algorithm.
+    Compress input data using a simple LZRW-inspired compression algorithm.
     
     Args:
         input_data (bytes): The input data to be compressed.
@@ -27,44 +27,47 @@ def compress(input_data):
         return bytes()
     
     # Initialize compression structures
-    output = []
+    output = bytearray()
     dictionary = {}
     
-    # Sliding window for compression
+    # Sliding window
     window_start = 0
     
     while window_start < len(input_data):
-        # Find the longest match in dictionary
-        match_length = 0
-        match_index = -1
+        # Initialize variables for best match
+        best_match_length = 0
+        best_match_index = -1
         
+        # Try to find the longest match in the dictionary
         for length in range(min(256, len(input_data) - window_start), 0, -1):
-            substring = input_data[window_start:window_start + length]
+            current_substring = input_data[window_start:window_start + length]
             
-            if substring in dictionary:
-                match_length = length
-                match_index = dictionary[substring]
+            if current_substring in dictionary:
+                best_match_length = length
+                best_match_index = dictionary[current_substring]
                 break
         
-        if match_length > 0:
-            # Found a match in dictionary
-            output.append(match_index)
-            window_start += match_length
+        if best_match_length > 0:
+            # Found a match
+            output.append(best_match_index)
+            window_start += best_match_length
         else:
             # No match, output literal byte
             output.append(input_data[window_start])
             window_start += 1
         
-        # Update dictionary
+        # Update dictionary with sliding window
         if window_start > 0:
-            new_key = input_data[max(0, window_start-2):window_start]
-            dictionary[new_key] = len(dictionary)
+            # Use small, overlapping sequences as dictionary keys
+            context = input_data[max(0, window_start-2):window_start]
+            if len(context) >= 1:
+                dictionary[context] = len(dictionary) % 256
     
     return bytes(output)
 
 def decompress(compressed_data):
     """
-    Decompress data compressed with the LZRW compression algorithm.
+    Decompress data compressed with the custom LZRW algorithm.
     
     Args:
         compressed_data (bytes): The compressed input data.
@@ -84,26 +87,22 @@ def decompress(compressed_data):
         return bytes()
     
     # Initialize decompression structures
-    output = []
+    output = bytearray()
     dictionary = {}
     
-    for value in compressed_data:
-        if value < len(dictionary):
-            # Dictionary reference
-            sequence = list(dictionary.keys())[value]
+    for current_byte in compressed_data:
+        if current_byte < len(dictionary):
+            # Retrieve sequence from dictionary
+            sequence = list(dictionary.keys())[current_byte]
             output.extend(sequence)
-            
-            # Update dictionary
-            if output:
-                new_key = bytes(output[-2:]) if len(output) > 1 else bytes([value])
-                dictionary[new_key] = len(dictionary)
         else:
             # Literal byte
-            output.append(value)
-            
-            # Update dictionary
-            if len(output) > 1:
-                new_key = bytes(output[-2:])
-                dictionary[new_key] = len(dictionary)
+            output.append(current_byte)
+        
+        # Update dictionary
+        if len(output) > 1:
+            # Use last 1-2 bytes as context
+            context = bytes(output[-2:]) if len(output) > 1 else bytes([current_byte])
+            dictionary[context] = len(dictionary) % 256
     
     return bytes(output)
