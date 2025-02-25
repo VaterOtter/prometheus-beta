@@ -29,35 +29,35 @@ def compress(input_data):
     # Initialization
     output = bytearray()
     dictionary = {}
-    current_sequence = bytearray()
+    current_sequence = b''
     
     for byte in input_data:
         # Extend current sequence
-        current_sequence.append(byte)
+        current_sequence += bytes([byte])
         
         # Check if current sequence exists in dictionary
-        if bytes(current_sequence) not in dictionary:
+        if current_sequence not in dictionary:
             # New sequence found
             if len(current_sequence) > 1:
                 # Try to find the longest existing prefix
                 prefix = current_sequence[:-1]
                 if prefix in dictionary:
-                    # Output dictionary reference or literal
+                    # Output dictionary reference
                     output.append(dictionary[prefix])
                 else:
                     # Output individual bytes
                     output.extend(prefix)
             
             # Add new sequence to dictionary
-            dictionary[bytes(current_sequence)] = len(dictionary)
+            dictionary[current_sequence] = len(dictionary)
             
             # Reset current sequence to last byte
-            current_sequence = bytearray([byte])
+            current_sequence = bytes([byte])
     
     # Handle remaining sequence
     if current_sequence:
-        if bytes(current_sequence) in dictionary:
-            output.append(dictionary[bytes(current_sequence)])
+        if current_sequence in dictionary:
+            output.append(dictionary[current_sequence])
         else:
             output.extend(current_sequence)
     
