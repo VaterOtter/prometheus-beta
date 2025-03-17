@@ -10,9 +10,9 @@ from timestamp_converter import timestamp_to_human_readable
 
 def test_valid_timestamp():
     """Test conversion of a standard timestamp."""
-    # Using a known timestamp (2023-05-15 10:30:00 UTC)
+    # Using a known timestamp (2023-05-15 09:20:00 UTC)
     timestamp = 1684142400
-    assert timestamp_to_human_readable(timestamp) == '2023-05-15 10:30:00 UTC'
+    assert timestamp_to_human_readable(timestamp) == '2023-05-15 09:20:00 UTC'
 
 def test_zero_timestamp():
     """Test conversion of timestamp zero (epoch start)."""
@@ -22,7 +22,7 @@ def test_zero_timestamp():
 def test_float_timestamp():
     """Test conversion of a float timestamp."""
     timestamp = 1684142400.5
-    assert timestamp_to_human_readable(timestamp) == '2023-05-15 10:30:00 UTC'
+    assert timestamp_to_human_readable(timestamp) == '2023-05-15 09:20:00 UTC'
 
 def test_invalid_type_input():
     """Test error handling for non-numeric input."""
