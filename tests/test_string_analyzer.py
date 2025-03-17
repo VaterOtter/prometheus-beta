@@ -14,7 +14,7 @@ def test_uppercase_string():
 def test_mixed_case_string():
     """Test a string with mixed case letters."""
     result = count_vowels_consonants("PyThOn")
-    assert result == {'vowels': 1, 'consonants': 4}
+    assert result == {'vowels': 1, 'consonants': 5}
 
 def test_empty_string():
     """Test an empty string."""
