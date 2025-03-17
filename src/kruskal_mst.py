@@ -78,6 +78,10 @@ def kruskal_mst(graph):
     # Get number of vertices
     vertices = max(max(edge[1], edge[2]) for edge in graph) + 1
     
+    # Validate single vertex graph
+    if vertices == 1:
+        raise ValueError("Graph must have more than one vertex")
+    
     # Sort edges by weight
     edges = sorted(graph)
     
@@ -92,5 +96,9 @@ def kruskal_mst(graph):
         # If including this edge doesn't cause a cycle, add it to MST
         if disjoint_set.union(u, v):
             mst.append((weight, u, v))
+            
+            # Stop when MST is complete (n-1 edges)
+            if len(mst) == vertices - 1:
+                break
     
     return mst
