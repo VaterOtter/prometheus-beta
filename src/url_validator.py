@@ -44,18 +44,21 @@ def is_valid_url(url: str) -> bool:
         if not parsed_url.netloc:
             return False
         
-        # Use regex to validate domain/IP format
-        domain_regex = re.compile(
-            r'^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*'
-            r'([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$'
-        )
-        
         # Split netloc to handle potential port
         domain = parsed_url.netloc.split(':')[0]
         
-        # Validate domain or IP
-        if not (domain_regex.match(domain) or 
-                re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', domain)):
+        # Regex for fully qualified domain names
+        domain_regex = re.compile(
+            r'^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.[A-Za-z0-9-]{1,63})*\.[A-Za-z]{2,}$'
+        )
+        
+        # Regex for IPv4 addresses
+        ip_regex = re.compile(
+            r'^(\d{1,3}\.){3}\d{1,3}$'
+        )
+        
+        # Validate domain
+        if not (domain_regex.match(domain) or ip_regex.match(domain)):
             return False
         
         return True
