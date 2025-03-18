@@ -20,47 +20,48 @@ def max_increasing_subsequence_sum(arr: List[int]) -> int:
     if not arr:
         return 0
     
-    # Tracking subsequence endpoints and their maximum sums
-    dp = []  # dp will contain [end_value, max_sum_ending_with_this_value]
+    # Track potential subsequence endpoints and their maximum possible sum
+    subsequence_states = []
     
     for num in arr:
-        if not dp or num > dp[-1][0]:
-            # Extending an existing subsequence with a new largest value
-            if not dp:
-                dp.append([num, num])
+        # If no subsequences or number is greater than last endpoint
+        if not subsequence_states or num > subsequence_states[-1][0]:
+            # Add a new subsequence state
+            if not subsequence_states:
+                subsequence_states.append([num, num])
             else:
-                dp.append([num, dp[-1][1] + num])
+                subsequence_states.append([num, subsequence_states[-1][1] + num])
         else:
-            # Find the correct position to insert/replace
-            index = binary_search(dp, num)
+            # Binary search to find replacement point
+            index = binary_search(subsequence_states, num)
             
-            # Update the subsequence endpoint
+            # Compute sum based on previous subsequence
             if index == 0:
-                # Replace the first endpoint
-                dp[index] = [num, num]
+                # First subsequence: just the number
+                subsequence_states[index] = [num, num]
             else:
-                # Extend the previous subsequence
-                dp[index] = [num, dp[index-1][1] + num]
+                # Add to previous subsequence's max sum
+                subsequence_states[index] = [num, subsequence_states[index-1][1] + num]
     
-    # Return the maximum subsequence sum
-    return max(sum_val for _, sum_val in dp) if dp else 0
+    # Return the maximum possible subsequence sum
+    return max(sum_val for _, sum_val in subsequence_states)
 
-def binary_search(dp: List[List[int]], target: int) -> int:
+def binary_search(states: List[List[int]], target: int) -> int:
     """
-    Binary search to find the insertion point for a new subsequence endpoint.
+    Binary search to find insertion point in subsequence states.
     
     Args:
-        dp (List[List[int]]): List of [endpoint_value, max_sum]
-        target (int): New value to insert
+        states (List[List[int]]): List of [endpoint_value, max_sum]
+        target (int): Value to insert
     
     Returns:
-        int: Index where the new value should be inserted
+        int: Insertion index
     """
-    left, right = 0, len(dp)
+    left, right = 0, len(states)
     
     while left < right:
         mid = (left + right) // 2
-        if dp[mid][0] < target:
+        if states[mid][0] < target:
             left = mid + 1
         else:
             right = mid
