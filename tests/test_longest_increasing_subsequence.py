@@ -31,4 +31,4 @@ def test_non_increasing_sequence():
 
 def test_mixed_sequence():
     """Test a mixed sequence with some increasing parts"""
-    assert longest_continuous_increasing_subsequence([1,2,3,0,2,3,4,5]) == 4
+    assert longest_continuous_increasing_subsequence([1,2,3,0,2,3,4,5]) == 5
