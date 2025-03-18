@@ -1,4 +1,5 @@
-from typing import List
+from typing import List, Tuple
+import bisect
 
 def max_increasing_subsequence_sum(arr: List[int]) -> int:
     """
@@ -20,50 +21,29 @@ def max_increasing_subsequence_sum(arr: List[int]) -> int:
     if not arr:
         return 0
     
-    # Track potential subsequence endpoints and their maximum possible sum
-    subsequence_states = []
+    # Initialize lists to track subsequence state
+    subsequence = []  # values in current subsequence
+    subsequence_sums = []  # maximum sum up to each point
     
     for num in arr:
-        # If no subsequences or number is greater than last endpoint
-        if not subsequence_states or num > subsequence_states[-1][0]:
-            # Add a new subsequence state
-            if not subsequence_states:
-                subsequence_states.append([num, num])
-            else:
-                subsequence_states.append([num, subsequence_states[-1][1] + num])
-        else:
-            # Binary search to find replacement point
-            index = binary_search(subsequence_states, num)
+        # If first element or cannot extend current subsequence
+        if not subsequence or num > subsequence[-1]:
+            # Compute new sum
+            new_sum = num if not subsequence_sums else subsequence_sums[-1] + num
             
-            # Compute sum based on previous subsequence
-            if index == 0:
-                # First subsequence: just the number
-                subsequence_states[index] = [num, num]
-            else:
-                # Add to previous subsequence's max sum
-                subsequence_states[index] = [num, subsequence_states[index-1][1] + num]
-    
-    # Return the maximum possible subsequence sum
-    return max(sum_val for _, sum_val in subsequence_states)
-
-def binary_search(states: List[List[int]], target: int) -> int:
-    """
-    Binary search to find insertion point in subsequence states.
-    
-    Args:
-        states (List[List[int]]): List of [endpoint_value, max_sum]
-        target (int): Value to insert
-    
-    Returns:
-        int: Insertion index
-    """
-    left, right = 0, len(states)
-    
-    while left < right:
-        mid = (left + right) // 2
-        if states[mid][0] < target:
-            left = mid + 1
+            subsequence.append(num)
+            subsequence_sums.append(new_sum)
         else:
-            right = mid
+            # Find the replacement index
+            index = bisect.bisect_left(subsequence, num)
+            
+            # Update subsequence and its sums
+            if index == 0:
+                subsequence[index] = num
+                subsequence_sums[index] = num
+            else:
+                subsequence[index] = num
+                subsequence_sums[index] = subsequence_sums[index-1] + num
     
-    return left
+    # Return maximum possible subsequence sum
+    return max(subsequence_sums)
