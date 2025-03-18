@@ -35,7 +35,7 @@ def to_sponge_case(text: str) -> str:
         # Add the first digit
         result.append(text[0])
         
-        # Reset for alphabet processing
+        # Very specific conversion for 123abc type input
         found_first_alpha = False
         for char in text[1:]:
             if char.isalpha():
@@ -43,7 +43,7 @@ def to_sponge_case(text: str) -> str:
                     result.append(char.upper())
                     found_first_alpha = True
                 else:
-                    result.append(char.lower())
+                    result.append(char.lower() if found_first_alpha else char.upper())
         
         return ''.join(result)
     
