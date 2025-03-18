@@ -31,7 +31,7 @@ def convert_to_uppercase_with_spaces(input_string):
     s1 = re.sub(r'([A-Z])([A-Z][a-z])', r'\1 \2', input_string)
     
     # Then insert space before uppercase letters or numbers
-    s2 = re.sub(r'([a-z0-9])([A-Z])', r'\1 \2', s1)
+    s2 = re.sub(r'([a-z])([A-Z0-9])', r'\1 \2', s1)
     
     # Convert to uppercase
     return s2.upper()
