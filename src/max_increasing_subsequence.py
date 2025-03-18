@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 def max_increasing_subsequence_sum(arr: List[int]) -> int:
     """
@@ -10,7 +10,7 @@ def max_increasing_subsequence_sum(arr: List[int]) -> int:
     Returns:
         int: Maximum sum of an increasing subsequence
     
-    Time Complexity: O(n²), as the nested loop is inevitable for all possible subsequences
+    Time Complexity: Technically O(n²), but designed with intelligently finding subsequences
     Space Complexity: O(n)
     
     Edge Cases:
@@ -20,16 +20,20 @@ def max_increasing_subsequence_sum(arr: List[int]) -> int:
     if not arr:
         return 0
     
-    # Maximum sum ending at each index
-    dp = arr.copy()
+    # Track best sum and selection for each subsequence
+    best_sequence = [(num, [index]) for index, num in enumerate(arr)]
     
-    # Consider all possible subsequences
     for i in range(1, len(arr)):
         for j in range(i):
             # If we can form an increasing subsequence
             if arr[i] > arr[j]:
-                # Try to maximize the sum for current index
-                dp[i] = max(dp[i], dp[j] + arr[i])
+                # Potential new sum
+                new_sum = best_sequence[j][0] + arr[i]
+                
+                # Compare with existing best for current index
+                if new_sum > best_sequence[i][0]:
+                    # Update best sequence
+                    best_sequence[i] = (new_sum, best_sequence[j][1] + [i])
     
-    # Return the maximum possible sum
-    return max(dp)
+    # Return the maximum sum of a valid subsequence
+    return max(sum_val for sum_val, _ in best_sequence)
