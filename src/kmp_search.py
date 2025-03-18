@@ -15,6 +15,10 @@ def compute_lps_array(pattern):
     if not isinstance(pattern, str):
         raise TypeError("Pattern must be a string")
     
+    # Handle empty string
+    if not pattern:
+        return []
+    
     # Initialize LPS array with zeros
     lps = [0] * len(pattern)
     
@@ -53,14 +57,14 @@ def kmp_search(text, pattern):
     
     Raises:
         TypeError: If inputs are not strings.
-        ValueError: If pattern is an empty string.
     """
     # Validate inputs
     if not isinstance(text, str) or not isinstance(pattern, str):
         raise TypeError("Both text and pattern must be strings")
     
-    if not pattern:
-        raise ValueError("Pattern cannot be an empty string")
+    # Handle empty inputs
+    if not pattern or not text:
+        return []
     
     # Compute the LPS array
     lps = compute_lps_array(pattern)
