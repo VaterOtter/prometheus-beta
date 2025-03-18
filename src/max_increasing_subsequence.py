@@ -1,9 +1,8 @@
 from typing import List
-import bisect
 
 def max_increasing_subsequence_sum(arr: List[int]) -> int:
     """
-    Find the maximum sum of an increasing subsequence with O(n log n) time complexity.
+    Find the maximum sum of an increasing subsequence.
     
     Args:
         arr (List[int]): Input array of integers
@@ -11,7 +10,7 @@ def max_increasing_subsequence_sum(arr: List[int]) -> int:
     Returns:
         int: Maximum sum of an increasing subsequence
     
-    Time Complexity: O(n log n)
+    Time Complexity: O(n²), as the nested loop is inevitable for all possible subsequences
     Space Complexity: O(n)
     
     Edge Cases:
@@ -21,23 +20,16 @@ def max_increasing_subsequence_sum(arr: List[int]) -> int:
     if not arr:
         return 0
     
-    # Store the best sequence sum for each length
-    dp = [(0, float('-inf'))]  # (sum, max_element)
+    # Maximum sum ending at each index
+    dp = arr.copy()
     
-    for num in arr:
-        # Find the best previous subsequence we can extend
-        index = bisect.bisect(dp, (0, num)) - 1
-        
-        # Get the best previous sum and compute new sum
-        prev_sum, prev_max = dp[index]
-        new_sum = prev_sum + num
-        
-        # Extend or replace subsequence
-        if index == len(dp) - 1:
-            dp.append((new_sum, num))
-        else:
-            # Replace or extend existing subsequence
-            dp[index + 1] = max(dp[index + 1], (new_sum, num), key=lambda x: x[0])
+    # Consider all possible subsequences
+    for i in range(1, len(arr)):
+        for j in range(i):
+            # If we can form an increasing subsequence
+            if arr[i] > arr[j]:
+                # Try to maximize the sum for current index
+                dp[i] = max(dp[i], dp[j] + arr[i])
     
-    # Return the maximum sum
-    return max(sum_val for sum_val, _ in dp)
+    # Return the maximum possible sum
+    return max(dp)
