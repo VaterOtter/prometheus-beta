@@ -39,18 +39,14 @@ def to_sponge_case(text: str) -> str:
         )
     
     # Special case for numeric-alphabet input
-    if text[0].isdigit() and sum(c.isalpha() for c in text) > 0:
-        # Add the first numeric character
+    if len(text) > 1 and text[0].isdigit() and text[1].isalpha():
         result.append(text[0])
-        
-        # Process the rest of the string
         for char in text[1:]:
             if char.isalpha():
                 result.append(char.upper() if alpha_count % 2 == 0 else char.lower())
                 alpha_count += 1
             else:
                 result.append(char)
-        
         return ''.join(result)
     
     # Normal case processing with alternating case
