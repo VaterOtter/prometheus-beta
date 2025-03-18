@@ -6,6 +6,7 @@ def test_compute_lps_array():
     assert compute_lps_array("AAAA") == [0, 1, 2, 3]
     assert compute_lps_array("ABCDE") == [0, 0, 0, 0, 0]
     assert compute_lps_array("AABAACAABAA") == [0, 1, 0, 1, 2, 0, 1, 2, 3, 4, 5]
+    assert compute_lps_array("") == []
     
     # Test error handling
     with pytest.raises(TypeError):
@@ -29,19 +30,19 @@ def test_kmp_search_edge_cases():
     assert kmp_search("aaaaa", "a") == [0, 1, 2, 3, 4]
 
 def test_kmp_search_error_handling():
-    # Type and value error cases
+    # Type error cases
     with pytest.raises(TypeError):
         kmp_search(None, "abc")
     with pytest.raises(TypeError):
         kmp_search("abc", None)
-    with pytest.raises(ValueError):
-        kmp_search("abc", "")
+    # No ValueError for empty string anymore
+    assert kmp_search("abc", "") == []
 
 def test_kmp_search_complex_patterns():
     # More complex pattern matching scenarios
     text = "AAAAABAAABA"
     pattern1 = "AAAA"
-    assert kmp_search(text, pattern1) == [0, 1, 2]
+    assert kmp_search(text, pattern1) == [0, 1]
     
     text = "ABABDABACDABABCABAB"
     pattern2 = "ABABCABAB"
