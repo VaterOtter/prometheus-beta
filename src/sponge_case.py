@@ -33,7 +33,7 @@ def to_sponge_case(text: str) -> str:
     for char in text:
         if char.isalpha():
             # Apply alternating case for alphabetic characters
-            result.append(char.upper() if alpha_count % 2 == 0 else char.lower())
+            result.append(char.lower() if alpha_count % 2 == 0 else char.upper())
             alpha_count += 1
         else:
             # Preserve non-alphabetic characters as-is
