@@ -29,11 +29,10 @@ def convert_to_uppercase_with_spaces(input_string):
     
     # Iterate through the rest of the characters
     for char in input_string[1:]:
-        # Add space before uppercase letters
-        if char.isupper() and not result[-1].isupper():
-            result.append(' ')
-        # Add space before numbers following letters
-        elif char.isdigit() and result[-1].isalpha():
+        # Add space before uppercase letters or numbers, 
+        # except when previous character was uppercase or a digit
+        if (char.isupper() and not result[-1].isupper()) or \
+           (char.isdigit() and result[-1].isalpha() and not result[-1].isupper()):
             result.append(' ')
         
         # Add the current character in uppercase
