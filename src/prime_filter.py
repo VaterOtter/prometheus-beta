@@ -12,6 +12,7 @@ def filter_primes(numbers):
         - Handles both positive and negative numbers
         - 0 and 1 are not considered prime
         - Negative numbers are considered prime based on their absolute value
+        - Excludes numbers divisible by any smaller prime
     """
     def is_prime(n):
         """
