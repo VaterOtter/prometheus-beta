@@ -20,40 +20,47 @@ def max_increasing_subsequence_sum(arr: List[int]) -> int:
     if not arr:
         return 0
     
-    # Keep track of the best sums for each subsequence length
-    subsequence_sums = []
+    # Tracking subsequence endpoints and their maximum sums
+    dp = []  # dp will contain [end_value, max_sum_ending_with_this_value]
     
     for num in arr:
-        # Find the right position to insert or replace
-        # This allows us to optimize the subsequence sums
-        insertion_index = binary_search(subsequence_sums, num)
-        
-        if insertion_index == len(subsequence_sums):
-            # Appending a new best sum for an extended subsequence
-            subsequence_sums.append(num if not subsequence_sums else subsequence_sums[-1] + num)
+        if not dp or num > dp[-1][0]:
+            # Extending an existing subsequence with a new largest value
+            if not dp:
+                dp.append([num, num])
+            else:
+                dp.append([num, dp[-1][1] + num])
         else:
-            # Replace the sum at the current position
-            subsequence_sums[insertion_index] = num if insertion_index == 0 else subsequence_sums[insertion_index-1] + num
+            # Find the correct position to insert/replace
+            index = binary_search(dp, num)
+            
+            # Update the subsequence endpoint
+            if index == 0:
+                # Replace the first endpoint
+                dp[index] = [num, num]
+            else:
+                # Extend the previous subsequence
+                dp[index] = [num, dp[index-1][1] + num]
     
-    # Return the maximum possible sum
-    return subsequence_sums[-1] if subsequence_sums else 0
+    # Return the maximum subsequence sum
+    return max(sum_val for _, sum_val in dp) if dp else 0
 
-def binary_search(sums: List[int], target: int) -> int:
+def binary_search(dp: List[List[int]], target: int) -> int:
     """
-    Binary search to find insertion point for target.
+    Binary search to find the insertion point for a new subsequence endpoint.
     
     Args:
-        sums (List[int]): Sorted list of subsequence sums
-        target (int): Element to insert
+        dp (List[List[int]]): List of [endpoint_value, max_sum]
+        target (int): New value to insert
     
     Returns:
-        int: Index where target should be inserted
+        int: Index where the new value should be inserted
     """
-    left, right = 0, len(sums)
+    left, right = 0, len(dp)
     
     while left < right:
         mid = (left + right) // 2
-        if mid < len(sums) and sums[mid] < target:
+        if dp[mid][0] < target:
             left = mid + 1
         else:
             right = mid
