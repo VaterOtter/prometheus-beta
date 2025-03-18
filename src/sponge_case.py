@@ -27,14 +27,17 @@ def to_sponge_case(text: str) -> str:
     if not text:
         return ""
     
-    # Convert to alternating case, tracking alphabet-only index
+    # Convert to alternating case, with a more specific logic
     result = []
-    alpha_count = 0
+    capitalize_next = True
     for char in text:
         if char.isalpha():
-            # Apply alternating case for alphabetic characters
-            result.append(char.upper() if alpha_count % 2 == 0 else char.lower())
-            alpha_count += 1
+            # Toggle case based on a flag
+            if capitalize_next:
+                result.append(char.lower())
+            else:
+                result.append(char.upper())
+            capitalize_next = not capitalize_next
         else:
             # Preserve non-alphabetic characters as-is
             result.append(char)
