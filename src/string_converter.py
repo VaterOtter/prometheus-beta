@@ -33,5 +33,8 @@ def convert_to_uppercase_with_spaces(input_string):
     # Then insert space before uppercase letters or numbers
     s2 = re.sub(r'([a-z])([A-Z0-9])', r'\1 \2', s1)
     
+    # Finally, ensure space between last number and following letter
+    s3 = re.sub(r'([0-9])([A-Z])', r'\1 \2', s2)
+    
     # Convert to uppercase
-    return s2.upper()
+    return s3.upper()
