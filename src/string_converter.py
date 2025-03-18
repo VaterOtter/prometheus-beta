@@ -1,3 +1,5 @@
+import re
+
 def convert_to_uppercase_with_spaces(input_string):
     """
     Convert a given string to uppercase with spaces.
@@ -24,18 +26,12 @@ def convert_to_uppercase_with_spaces(input_string):
     if not input_string:
         return ""
     
-    # Initialize result with the first character
-    result = [input_string[0].upper()]
+    # Use regex to insert spaces before uppercase letters and digits
+    # First, handle consecutive uppercase letters
+    s1 = re.sub(r'([A-Z])([A-Z][a-z])', r'\1 \2', input_string)
     
-    # Iterate through the rest of the characters
-    for char in input_string[1:]:
-        # Add space before uppercase letters or numbers, 
-        # except when previous character was uppercase or a digit
-        if (char.isupper() and not result[-1].isupper()) or \
-           (char.isdigit() and result[-1].isalpha() and not result[-1].isupper()):
-            result.append(' ')
-        
-        # Add the current character in uppercase
-        result.append(char.upper())
+    # Then insert space before uppercase letters or numbers
+    s2 = re.sub(r'([a-z0-9])([A-Z])', r'\1 \2', s1)
     
-    return ''.join(result)
+    # Convert to uppercase
+    return s2.upper()
