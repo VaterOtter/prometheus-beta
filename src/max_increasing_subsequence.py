@@ -1,4 +1,5 @@
 from typing import List
+import bisect
 
 def max_increasing_subsequence_sum(arr: List[int]) -> int:
     """
@@ -20,18 +21,23 @@ def max_increasing_subsequence_sum(arr: List[int]) -> int:
     if not arr:
         return 0
     
-    # Maximum value that can be achieved ending at each index
-    max_sum_ending_here = [num for num in arr]
+    # Store the best sequence sum for each length
+    dp = [(0, float('-inf'))]  # (sum, max_element)
     
-    # Track previous subsequence max to optimize finding increasing subsequence
-    prev_max = [float('-inf')] * len(arr)
+    for num in arr:
+        # Find the best previous subsequence we can extend
+        index = bisect.bisect(dp, (0, num)) - 1
+        
+        # Get the best previous sum and compute new sum
+        prev_sum, prev_max = dp[index]
+        new_sum = prev_sum + num
+        
+        # Extend or replace subsequence
+        if index == len(dp) - 1:
+            dp.append((new_sum, num))
+        else:
+            # Replace or extend existing subsequence
+            dp[index + 1] = max(dp[index + 1], (new_sum, num), key=lambda x: x[0])
     
-    for i in range(1, len(arr)):
-        for j in range(i):
-            # If current can form an increasing subsequence
-            if (arr[i] > arr[j]) and (max_sum_ending_here[j] + arr[i] > max_sum_ending_here[i]):
-                max_sum_ending_here[i] = max_sum_ending_here[j] + arr[i]
-                prev_max[i] = max_sum_ending_here[j]
-    
-    # Return maximum sum
-    return max(max_sum_ending_here)
+    # Return the maximum sum
+    return max(sum_val for sum_val, _ in dp)
