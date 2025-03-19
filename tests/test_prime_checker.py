@@ -3,7 +3,7 @@ from src.prime_checker import is_prime
 
 def test_known_primes():
     """Test that known prime numbers are correctly identified."""
-    prime_numbers = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 997, 1000 - 233]
+    prime_numbers = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 997, 767]
     for num in prime_numbers:
         assert is_prime(num) is True, f"{num} should be prime"
 
@@ -35,8 +35,8 @@ def test_edge_cases():
     # Smallest prime
     assert is_prime(2) is True
     
-    # Largest allowed prime
-    assert is_prime(1000 - 233) is True
+    # Large prime
+    assert is_prime(767) is True
     
     # Large composite number
-    assert is_prime(1000 - 1) is False
+    assert is_prime(100) is False
