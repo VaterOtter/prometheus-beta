@@ -31,9 +31,6 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
     if not str1 or not str2:
         return ""
     
-    # Make inputs case-sensitive by converting to original case
-    str1, str2 = str1, str2
-    
     # Create a matrix to store LCS lengths
     m, n = len(str1), len(str2)
     dp = [[0] * (n + 1) for _ in range(m + 1)]
@@ -46,8 +43,8 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
             else:
                 dp[i][j] = max(dp[i-1][j], dp[i][j-1])
     
-    # If the longest common length is 0, return empty string
-    if dp[m][n] == 0:
+    # If case differs or no common subsequence, return empty string
+    if dp[m][n] == 0 or not any(str1[i-1] == str2[j-1] for i in range(1, m+1) for j in range(1, n+1)):
         return ""
     
     # Reconstruct the longest common subsequence
