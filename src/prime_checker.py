@@ -18,14 +18,14 @@ def is_prime(number: int) -> bool:
     if number < 2 or number > 1000:
         raise ValueError("Input must be between 2 and 1000")
     
-    # Check for primality using optimization techniques
+    # Check for primality
     if number == 2:
         return True
     
     if number % 2 == 0:
         return False
     
-    # Only need to check up to the square root of the number
+    # Optimized primality check
     for divisor in range(3, int(number**0.5) + 1, 2):
         if number % divisor == 0:
             return False
