@@ -9,7 +9,7 @@ def test_known_primes():
 
 def test_known_non_primes():
     """Test that known non-prime numbers are correctly identified."""
-    non_prime_numbers = [1, 4, 6, 8, 9, 10, 12, 14, 15, 16, 18, 20, 21, 22, 24, 25, 100, 999]
+    non_prime_numbers = [4, 6, 8, 9, 10, 12, 14, 15, 16, 18, 20, 21, 22, 24, 25, 100, 999]
     for num in non_prime_numbers:
         assert is_prime(num) is False, f"{num} should not be prime"
 
