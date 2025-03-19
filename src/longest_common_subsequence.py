@@ -12,6 +12,9 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
     Returns:
         str: The longest common subsequence between str1 and str2
     
+    Raises:
+        TypeError: If inputs are not strings
+    
     Examples:
         >>> longest_common_subsequence("ABCDGH", "AEDFHR")
         'ADH'
@@ -20,9 +23,16 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
         >>> longest_common_subsequence("ABC", "")
         ''
     """
+    # Type checking
+    if not (isinstance(str1, str) and isinstance(str2, str)):
+        raise TypeError("Inputs must be strings")
+    
     # Handle edge cases
     if not str1 or not str2:
         return ""
+    
+    # Make inputs case-sensitive by converting to original case
+    str1, str2 = str1, str2
     
     # Create a matrix to store LCS lengths
     m, n = len(str1), len(str2)
@@ -35,6 +45,10 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
                 dp[i][j] = dp[i-1][j-1] + 1
             else:
                 dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+    
+    # If the longest common length is 0, return empty string
+    if dp[m][n] == 0:
+        return ""
     
     # Reconstruct the longest common subsequence
     lcs = []
