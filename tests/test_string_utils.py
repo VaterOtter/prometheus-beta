@@ -3,19 +3,19 @@ from src.string_utils import rotate_and_reverse
 
 def test_basic_rotation_and_reverse():
     """Test basic string rotation and reversal."""
-    assert rotate_and_reverse("hello", 2) == "lohel"
+    assert rotate_and_reverse("hello", 2) == "lehol"
 
 def test_full_rotation():
     """Test rotation equal to string length."""
-    assert rotate_and_reverse("python", 6) == "python"
+    assert rotate_and_reverse("python", 6) == "nohtyp"
 
 def test_multiple_rotations():
     """Test rotations more than string length."""
-    assert rotate_and_reverse("world", 7) == "dlrow"
+    assert rotate_and_reverse("world", 7) == "rowdl"
 
 def test_zero_rotations():
     """Test zero rotations."""
-    assert rotate_and_reverse("test", 0) == "test"
+    assert rotate_and_reverse("test", 0) == "tset"
 
 def test_empty_string():
     """Test empty string input."""
