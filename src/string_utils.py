@@ -1,13 +1,13 @@
 def rotate_and_reverse(string: str, rotations: int) -> str:
     """
-    Rotate a string a specified number of times and then reverse it.
+    Reverse the string first, then rotate it a specified number of times.
     
     Args:
-        string (str): The input string to rotate and reverse.
-        rotations (int): Number of times to rotate the string.
+        string (str): The input string to reverse and rotate.
+        rotations (int): Number of times to rotate the reversed string.
     
     Returns:
-        str: The rotated and reversed string.
+        str: The reversed and rotated string.
     
     Raises:
         TypeError: If string is not a string or rotations is not an integer.
@@ -26,7 +26,7 @@ def rotate_and_reverse(string: str, rotations: int) -> str:
     
     # Handle empty string or zero rotations
     if not string or rotations == 0:
-        return string
+        return string[::-1]
     
     # First reverse the string
     reversed_string = string[::-1]
