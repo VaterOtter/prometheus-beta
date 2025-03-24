@@ -33,8 +33,8 @@ def test_custom_separator(caplog):
 def test_different_log_levels(caplog):
     """Test logging at different log levels."""
     caplog.set_level(logging.DEBUG)
-    log_multiple("Debug message", log_level=logging.DEBUG, values=["debug", "info"])
-    log_multiple("Warning message", log_level=logging.WARNING, values=["warning"])
+    log_multiple("Debug message", "debug", "info", log_level=logging.DEBUG)
+    log_multiple("Warning message", "warning", log_level=logging.WARNING)
     assert "Debug message debug | info" in caplog.text
     assert "Warning message warning" in caplog.text
 
@@ -50,3 +50,10 @@ def test_mixed_type_values(caplog):
     caplog.set_level(logging.INFO)
     log_multiple("Mixed types:", 42, "string", [1, 2, 3], {"key": "value"})
     assert "Mixed types: 42 | string | [1, 2, 3] | {'key': 'value'}" in caplog.text
+
+
+def test_extra_values(caplog):
+    """Test logging with extra values list."""
+    caplog.set_level(logging.INFO)
+    log_multiple("Test:", "value1", extra_values=[42, 3.14])
+    assert "Test: value1 | 42 | 3.14" in caplog.text
