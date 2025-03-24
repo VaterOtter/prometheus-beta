@@ -9,86 +9,34 @@ import sys
 from src.multi_logger import log_multiple
 
 
-def test_basic_logging():
+def test_basic_logging(caplog):
     """Test basic logging of multiple values."""
-    # Capture stdout
-    captured_output = io.StringIO()
-    sys.stdout = captured_output
-
-    # Configure a basic logger to stdout
-    logging.basicConfig(stream=captured_output, level=logging.INFO, format='%(message)s')
-
-    # Log multiple values
+    caplog.set_level(logging.INFO)
     log_multiple("Test:", "value1", 42, 3.14)
-
-    # Restore stdout
-    sys.stdout = sys.__stdout__
-
-    # Check output
-    output = captured_output.getvalue().strip()
-    assert "Test: value1 | 42 | 3.14" in output
+    assert "Test: value1 | 42 | 3.14" in caplog.text
 
 
-def test_no_values():
+def test_no_values(caplog):
     """Test logging with no additional values."""
-    # Capture stdout
-    captured_output = io.StringIO()
-    sys.stdout = captured_output
-
-    # Configure a basic logger to stdout
-    logging.basicConfig(stream=captured_output, level=logging.INFO, format='%(message)s')
-
-    # Log without additional values
+    caplog.set_level(logging.INFO)
     log_multiple("Test message")
-
-    # Restore stdout
-    sys.stdout = sys.__stdout__
-
-    # Check output
-    output = captured_output.getvalue().strip()
-    assert output == "Test message"
+    assert "Test message" in caplog.text
 
 
-def test_custom_separator():
+def test_custom_separator(caplog):
     """Test logging with a custom separator."""
-    # Capture stdout
-    captured_output = io.StringIO()
-    sys.stdout = captured_output
-
-    # Configure a basic logger to stdout
-    logging.basicConfig(stream=captured_output, level=logging.INFO, format='%(message)s')
-
-    # Log with custom separator
+    caplog.set_level(logging.INFO)
     log_multiple("Test:", "value1", 42, separator=' - ')
-
-    # Restore stdout
-    sys.stdout = sys.__stdout__
-
-    # Check output
-    output = captured_output.getvalue().strip()
-    assert "Test: value1 - 42" in output
+    assert "Test: value1 - 42" in caplog.text
 
 
-def test_different_log_levels():
+def test_different_log_levels(caplog):
     """Test logging at different log levels."""
-    # Capture stdout
-    captured_output = io.StringIO()
-    sys.stdout = captured_output
-
-    # Configure a basic logger to stdout
-    logging.basicConfig(stream=captured_output, level=logging.DEBUG, format='%(message)s')
-
-    # Log at different levels
-    log_multiple("Debug message", logging.DEBUG, "debug", "info")
-    log_multiple("Warning message", logging.WARNING, "warning")
-
-    # Restore stdout
-    sys.stdout = sys.__stdout__
-
-    # Check output
-    output = captured_output.getvalue().strip()
-    assert "Debug message debug | info" in output
-    assert "Warning message warning" in output
+    caplog.set_level(logging.DEBUG)
+    log_multiple("Debug message", log_level=logging.DEBUG, values=["debug", "info"])
+    log_multiple("Warning message", log_level=logging.WARNING, values=["warning"])
+    assert "Debug message debug | info" in caplog.text
+    assert "Warning message warning" in caplog.text
 
 
 def test_invalid_message_type():
@@ -97,21 +45,8 @@ def test_invalid_message_type():
         log_multiple(123, "value")
 
 
-def test_mixed_type_values():
+def test_mixed_type_values(caplog):
     """Test logging values of mixed types."""
-    # Capture stdout
-    captured_output = io.StringIO()
-    sys.stdout = captured_output
-
-    # Configure a basic logger to stdout
-    logging.basicConfig(stream=captured_output, level=logging.INFO, format='%(message)s')
-
-    # Log mixed types
+    caplog.set_level(logging.INFO)
     log_multiple("Mixed types:", 42, "string", [1, 2, 3], {"key": "value"})
-
-    # Restore stdout
-    sys.stdout = sys.__stdout__
-
-    # Check output
-    output = captured_output.getvalue().strip()
-    assert "Mixed types: 42 | string | [1, 2, 3] | {'key': 'value'}" in output
+    assert "Mixed types: 42 | string | [1, 2, 3] | {'key': 'value'}" in caplog.text
