@@ -14,7 +14,7 @@ def log_multiple(
     *values: Any,
     log_level: int = logging.INFO,
     separator: str = ' | ',
-    values: Optional[list] = None
+    extra_values: Optional[list] = None
 ) -> None:
     """
     Log multiple values in a single statement with flexible formatting.
@@ -24,7 +24,7 @@ def log_multiple(
         *values (Any): Variable number of values to log
         log_level (int, optional): Logging level. Defaults to logging.INFO
         separator (str, optional): Separator between values. Defaults to ' | '
-        values (Optional[list], optional): Alternative way to pass values as a list
+        extra_values (Optional[list], optional): Additional values to log
 
     Raises:
         TypeError: If message is not a string
@@ -38,10 +38,10 @@ def log_multiple(
     if not isinstance(message, str):
         raise TypeError("Message must be a string")
 
-    # Combine values from both *values and values parameter
-    all_values = list(values) if values else []
-    if hasattr(values, 'values') and values['values']:
-        all_values.extend(values['values'])
+    # Combine values from both *values and extra_values parameter
+    all_values = list(values)
+    if extra_values:
+        all_values.extend(extra_values)
 
     # Prepare values for logging
     value_str = separator.join(str(val) for val in all_values) if all_values else ''
