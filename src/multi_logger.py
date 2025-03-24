@@ -6,14 +6,15 @@ multiple types of input and log them efficiently.
 """
 
 import logging
-from typing import Any, Union, Iterable
+from typing import Any, Union, Iterable, Optional
 
 
 def log_multiple(
     message: str,
     *values: Any,
     log_level: int = logging.INFO,
-    separator: str = ' | '
+    separator: str = ' | ',
+    values: Optional[list] = None
 ) -> None:
     """
     Log multiple values in a single statement with flexible formatting.
@@ -23,6 +24,7 @@ def log_multiple(
         *values (Any): Variable number of values to log
         log_level (int, optional): Logging level. Defaults to logging.INFO
         separator (str, optional): Separator between values. Defaults to ' | '
+        values (Optional[list], optional): Alternative way to pass values as a list
 
     Raises:
         TypeError: If message is not a string
@@ -36,22 +38,19 @@ def log_multiple(
     if not isinstance(message, str):
         raise TypeError("Message must be a string")
 
+    # Combine values from both *values and values parameter
+    all_values = list(values) if values else []
+    if hasattr(values, 'values') and values['values']:
+        all_values.extend(values['values'])
+
     # Prepare values for logging
-    value_str = separator.join(str(val) for val in values) if values else ''
+    value_str = separator.join(str(val) for val in all_values) if all_values else ''
     
     # Combine message and values
     full_message = f"{message} {value_str}".strip()
 
     # Get the root logger if no logger is configured
     logger = logging.getLogger()
-
-    # If no handlers are configured, add a default console handler
-    if not logger.handlers:
-        console_handler = logging.StreamHandler()
-        formatter = logging.Formatter('%(message)s')
-        console_handler.setFormatter(formatter)
-        logger.addHandler(console_handler)
-        logger.setLevel(logging.INFO)
 
     # Ensure log_level is an integer and within valid range
     if not isinstance(log_level, int):
