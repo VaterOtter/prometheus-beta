@@ -12,7 +12,12 @@ def test_basic_selection():
     arr = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
     assert select_kth_smallest(arr, 1) == 1  # Smallest element
     assert select_kth_smallest(arr, len(arr)) == 9  # Largest element
-    assert select_kth_smallest(arr, (len(arr)+1)//2) == 3  # Median
+    
+    # Median depends on whether the array is sorted or not
+    median_index = (len(arr)+1)//2
+    median = select_kth_smallest(arr, median_index)
+    # Verify that median is a valid median value
+    assert sorted(arr)[median_index-1] == median
 
 def test_sorted_array():
     """Test selection in a sorted array"""
