@@ -21,40 +21,36 @@ def find_longest_parity_subsequence(arr):
     if not arr:
         return []
     
-    # Define parity-finding functions
-    def finds_even_subsequence(x):
-        return x % 2 == 0
-    
-    def finds_odd_subsequence(x):
-        return x % 2 != 0
-    
-    def get_longest_subsequence(parity_check):
-        # Track best subsequence and current subsequence
-        longest_seq = []
-        current_seq = []
+    def extract_continuous_subsequences(parity_func):
+        """Extract continuous subsequences of a specific parity."""
+        subsequences = []
+        current_subsequence = []
         
-        # Iterate over all numbers
-        for i, num in enumerate(arr):
-            # If number matches parity condition
-            if parity_check(num):
-                current_seq.append(num)
-                
-                # Check if next number breaks the parity
-                if i < len(arr) - 1 and not parity_check(arr[i+1]):
-                    # Update longest subsequence if current is longer
-                    if len(current_seq) > len(longest_seq):
-                        longest_seq = current_seq
-                    current_seq = []
+        for num in arr:
+            if parity_func(num):
+                current_subsequence.append(num)
+            else:
+                if current_subsequence:
+                    subsequences.append(current_subsequence)
+                    current_subsequence = []
         
-        # Final check for subsequence at the end of array
-        if len(current_seq) > len(longest_seq):
-            longest_seq = current_seq
+        # Add the last subsequence if not empty
+        if current_subsequence:
+            subsequences.append(current_subsequence)
         
-        return longest_seq
+        return subsequences
     
-    # Find the longest subsequences for even and odd
-    longest_even_seq = get_longest_subsequence(finds_even_subsequence)
-    longest_odd_seq = get_longest_subsequence(finds_odd_subsequence)
+    # Get even and odd subsequences
+    even_subsequences = extract_continuous_subsequences(lambda x: x % 2 == 0)
+    odd_subsequences = extract_continuous_subsequences(lambda x: x % 2 != 0)
     
-    # Prefer even subsequence if lengths are equal or longer
+    # Find the longest subsequence
+    def get_longest_subsequence(subsequences):
+        return max(subsequences, key=len) if subsequences else []
+    
+    # Get longest subsequences
+    longest_even_seq = get_longest_subsequence(even_subsequences)
+    longest_odd_seq = get_longest_subsequence(odd_subsequences)
+    
+    # Prefer even subsequence if lengths are equal
     return longest_even_seq if len(longest_even_seq) >= len(longest_odd_seq) else longest_odd_seq
