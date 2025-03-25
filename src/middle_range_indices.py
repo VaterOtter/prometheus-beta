@@ -27,8 +27,13 @@ def find_middle_range_indices(sorted_list, range_size):
     if not sorted_list:
         raise ValueError("Input list cannot be empty")
     
-    # Calculate the middle index
-    mid_index = len(sorted_list) // 2
+    # Calculate the middle index for both odd and even length lists
+    if len(sorted_list) % 2 == 1:
+        # Odd length: use integer division to get exact middle
+        mid_index = len(sorted_list) // 2
+    else:
+        # Even length: use the left-of-center middle index
+        mid_index = (len(sorted_list) // 2) - 1
     
     # Calculate the start and end indices for the range
     start_index = max(0, mid_index - range_size)
