@@ -25,30 +25,32 @@ def find_longest_parity_subsequence(arr):
     max_even_seq = []
     max_odd_seq = []
     
-    # Comprehensive scanning approach
-    for is_even in [True, False]:
-        # Initialize tracking variables
+    # Function to find the longest parity subsequence
+    def get_longest_parity_seq(parity_func):
+        longest_seq = []
         current_seq = []
         
         for num in arr:
-            # Check parity condition based on current mode
-            if (is_even and num % 2 == 0) or (not is_even and num % 2 != 0):
+            if parity_func(num):
+                # If number matches the parity
                 current_seq.append(num)
             else:
-                # Update max sequence
-                if is_even:
-                    max_even_seq = max(max_even_seq, current_seq, key=len)
-                else:
-                    max_odd_seq = max(max_odd_seq, current_seq, key=len)
-                
-                # Reset current sequence 
+                # If number breaks parity, update longest sequence
+                if len(current_seq) > len(longest_seq):
+                    longest_seq = current_seq
                 current_seq = []
         
-        # Final check for the last subsequence
-        if is_even:
-            max_even_seq = max(max_even_seq, current_seq, key=len)
-        else:
-            max_odd_seq = max(max_odd_seq, current_seq, key=len)
+        # Final check after the loop
+        if len(current_seq) > len(longest_seq):
+            longest_seq = current_seq
+        
+        return longest_seq
+    
+    # Find longest even subsequence
+    max_even_seq = get_longest_parity_seq(lambda x: x % 2 == 0)
+    
+    # Find longest odd subsequence
+    max_odd_seq = get_longest_parity_seq(lambda x: x % 2 != 0)
     
     # Prefer even subsequence if lengths are equal
     return max_even_seq if len(max_even_seq) >= len(max_odd_seq) else max_odd_seq
