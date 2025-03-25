@@ -25,32 +25,29 @@ def find_longest_parity_subsequence(arr):
     max_even_seq = []
     max_odd_seq = []
     
-    # Function to find the longest parity subsequence
-    def get_longest_parity_seq(parity_func):
-        longest_seq = []
-        current_seq = []
-        
-        for num in arr:
-            if parity_func(num):
-                # If number matches the parity
-                current_seq.append(num)
+    # Go through the entire array
+    n = len(arr)
+    for start in range(n):
+        # Check both even and odd subsequences
+        for parity_mode in [True, False]:  # True for even, False for odd
+            current_seq = []
+            
+            # Scan from the starting point forward
+            for j in range(start, n):
+                # Check the parity condition
+                if (parity_mode and arr[j] % 2 == 0) or (not parity_mode and arr[j] % 2 != 0):
+                    current_seq.append(arr[j])
+                else:
+                    # Stop when parity changes
+                    break
+            
+            # Update max subsequences
+            if parity_mode:
+                if len(current_seq) > len(max_even_seq):
+                    max_even_seq = current_seq
             else:
-                # If number breaks parity, update longest sequence
-                if len(current_seq) > len(longest_seq):
-                    longest_seq = current_seq
-                current_seq = []
-        
-        # Final check after the loop
-        if len(current_seq) > len(longest_seq):
-            longest_seq = current_seq
-        
-        return longest_seq
+                if len(current_seq) > len(max_odd_seq):
+                    max_odd_seq = current_seq
     
-    # Find longest even subsequence
-    max_even_seq = get_longest_parity_seq(lambda x: x % 2 == 0)
-    
-    # Find longest odd subsequence
-    max_odd_seq = get_longest_parity_seq(lambda x: x % 2 != 0)
-    
-    # Prefer even subsequence if lengths are equal
+    # Prefer even sequence if lengths are equal
     return max_even_seq if len(max_even_seq) >= len(max_odd_seq) else max_odd_seq
