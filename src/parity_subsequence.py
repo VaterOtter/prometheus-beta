@@ -21,33 +21,42 @@ def find_longest_parity_subsequence(arr):
     if not arr:
         return []
     
-    # Track the longest subsequences
-    max_even_seq = []
-    max_odd_seq = []
+    # Track subsequences
+    longest_subsequences = {
+        'even': [],
+        'odd': []
+    }
     
-    # Go through the entire array
-    n = len(arr)
-    for start in range(n):
-        # Check both even and odd subsequences
-        for parity_mode in [True, False]:  # True for even, False for odd
-            current_seq = []
-            
-            # Scan from the starting point forward
-            for j in range(start, n):
-                # Check the parity condition
-                if (parity_mode and arr[j] % 2 == 0) or (not parity_mode and arr[j] % 2 != 0):
-                    current_seq.append(arr[j])
-                else:
-                    # Stop when parity changes
-                    break
-            
-            # Update max subsequences
-            if parity_mode:
-                if len(current_seq) > len(max_even_seq):
-                    max_even_seq = current_seq
-            else:
-                if len(current_seq) > len(max_odd_seq):
-                    max_odd_seq = current_seq
+    # Current subsequence being built
+    current_subsequence = []
     
-    # Prefer even sequence if lengths are equal
-    return max_even_seq if len(max_even_seq) >= len(max_odd_seq) else max_odd_seq
+    # Temporarily track the current parity (None, 'even', 'odd')
+    current_parity = None
+    
+    for num in arr:
+        # Determine the parity of the current number
+        parity = 'even' if num % 2 == 0 else 'odd'
+        
+        # If we need to start a new subsequence
+        if current_parity is None or current_parity == parity:
+            current_subsequence.append(num)
+            current_parity = parity
+        else:
+            # If parity has changed, update longest subsequence
+            if len(current_subsequence) > len(longest_subsequences[current_parity]):
+                longest_subsequences[current_parity] = current_subsequence.copy()
+            
+            # Start a new subsequence
+            current_subsequence = [num]
+            current_parity = parity
+    
+    # Final check to update the last subsequence if needed
+    if len(current_subsequence) > len(longest_subsequences[current_parity]):
+        longest_subsequences[current_parity] = current_subsequence
+    
+    # Compare subsequence lengths, favoring even if equal
+    even_len = len(longest_subsequences['even'])
+    odd_len = len(longest_subsequences['odd'])
+    
+    # Return the subsequence with max length, prefer even on tie
+    return longest_subsequences['even'] if even_len >= odd_len else longest_subsequences['odd']
