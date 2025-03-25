@@ -32,12 +32,12 @@ def find_longest_parity_subsequence(arr):
     for num in arr:
         # Even number processing
         if num % 2 == 0:
-            # Extend even sequence or start a new one
+            # Continue or start even sequence
             current_even_seq.append(num)
             # Reset odd sequence
             current_odd_seq = []
         else:
-            # Odd number processing
+            # Continue or start odd sequence
             current_odd_seq.append(num)
             # Reset even sequence
             current_even_seq = []
