@@ -58,16 +58,15 @@ def solve_knapsack(items: List[Item], max_weight: float) -> Tuple[float, List[It
                 dp[i][w] = dp[i-1][w]
             else:
                 # Max of including or excluding the current item
-                dp[i][w] = max(
-                    dp[i-1][w],  # Exclude current item
-                    dp[i-1][int(w - current_item.weight)] + current_item.value  # Include current item
-                )
+                include_value = dp[i-1][int(w - current_item.weight)] + current_item.value
+                exclude_value = dp[i-1][w]
+                dp[i][w] = max(exclude_value, include_value)
     
     # Backtrack to find selected items
     selected_items = []
     w = int(max_weight)
     for i in range(n, 0, -1):
-        if dp[i][w] != dp[i-1][w]:
+        if w >= 0 and dp[i][w] != dp[i-1][w]:
             selected_items.append(items[i-1])
             w -= int(items[i-1].weight)
     
