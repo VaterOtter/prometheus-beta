@@ -32,14 +32,12 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
             else:
                 dp[i][j] = max(dp[i-1][j], dp[i][j-1])
     
-    # Backtrack to find the LCS using a greedy approach to prefer later chars
+    # Backtrack to find the LCS
     lcs = []
     i, j = m, n
     while i > 0 and j > 0:
         if str1[i-1] == str2[j-1]:
-            # Only add if not a duplicate or if it's the first occurrence
-            if not lcs or str1[i-1] not in lcs:
-                lcs.append(str1[i-1])
+            lcs.append(str1[i-1])
             i -= 1
             j -= 1
         elif dp[i-1][j] > dp[i][j-1]:
