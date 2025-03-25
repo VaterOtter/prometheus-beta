@@ -21,34 +21,30 @@ def find_longest_parity_subsequence(arr):
     if not arr:
         return []
     
-    # Initial candidates for subsequences
+    # Track subsequences of different parities
     max_even_seq = []
     max_odd_seq = []
     
-    # Two-pass scanning approach
+    # Scan the entire array to find parity subsequences
     for is_even in [True, False]:
-        current_seq = []
-        best_seq = []
-        
-        for num in arr:
-            # Determine correct parity based on the flag
-            if (is_even and num % 2 == 0) or (not is_even and num % 2 != 0):
-                current_seq.append(num)
+        # Check each possible starting point 
+        for start in range(len(arr)):
+            # Temporary subsequence to track contiguous parity elements 
+            temp_seq = []
+            
+            # Scan from the starting point
+            for num in arr[start:]:
+                # Condition for maintaining parity
+                if (is_even and num % 2 == 0) or (not is_even and num % 2 != 0):
+                    temp_seq.append(num)
+                else:
+                    break
+            
+            # Update max subsequence for even or odd 
+            if is_even:
+                max_even_seq = max(max_even_seq, temp_seq, key=len)
             else:
-                # Keep track of the best subsequence
-                if len(current_seq) > len(best_seq):
-                    best_seq = current_seq
-                current_seq = []
-        
-        # Final check for the last subsequence
-        if len(current_seq) > len(best_seq):
-            best_seq = current_seq
-        
-        # Update max sequences
-        if is_even:
-            max_even_seq = best_seq
-        else:
-            max_odd_seq = best_seq
+                max_odd_seq = max(max_odd_seq, temp_seq, key=len)
     
-    # Prefer even sequence if lengths are equal
+    # Prefer even subsequence if lengths are equal
     return max_even_seq if len(max_even_seq) >= len(max_odd_seq) else max_odd_seq
