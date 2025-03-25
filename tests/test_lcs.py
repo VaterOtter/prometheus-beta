@@ -20,9 +20,10 @@ def test_no_common_subsequence():
     """Test LCS when no common subsequence exists"""
     assert longest_common_subsequence("ABC", "XYZ") == ""
 
-def test_partial_match():
-    """Test LCS with partial matches"""
-    assert longest_common_subsequence("ABCBDAB", "BDCABA") == "BCBA"
+def test_case_sensitivity():
+    """Test case sensitivity of LCS"""
+    assert longest_common_subsequence("Hello", "hello") == ""
+    assert longest_common_subsequence("HELLO", "HELLO") == "HELLO"
 
 def test_invalid_input_types():
     """Test error handling for invalid input types"""
@@ -33,10 +34,10 @@ def test_invalid_input_types():
     with pytest.raises(TypeError):
         longest_common_subsequence(None, "ABC")
 
-def test_case_sensitivity():
-    """Test case sensitivity of LCS"""
-    assert longest_common_subsequence("Hello", "hello") == ""
-    assert longest_common_subsequence("HELLO", "HELLO") == "HELLO"
+def test_longest_subsequence_order_matters():
+    """Test that LCS respects characters' original order"""
+    assert longest_common_subsequence("ABCBDAB", "BDCABA") == "BCBA"
+    assert longest_common_subsequence("ABCDE", "ACE") == "ACE"
 
 def test_repeated_characters():
     """Test LCS with repeated characters"""
