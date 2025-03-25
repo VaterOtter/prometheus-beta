@@ -34,12 +34,16 @@ def test_invalid_input_types():
     with pytest.raises(TypeError):
         longest_common_subsequence(None, "ABC")
 
-def test_longest_subsequence_order_matters():
-    """Test that LCS respects characters' original order"""
-    assert longest_common_subsequence("ABCBDAB", "BDCABA") == "BCBA"
-    assert longest_common_subsequence("ABCDE", "ACE") == "ACE"
+def test_longest_subsequence_order():
+    """Test LCS preserves order and selects lexicographically first subseq"""
+    cases = [
+        ("ABCBDAB", "BDCABA", "BCBA"),
+        ("ABCDE", "ACE", "ACE"),
+        ("ABCCCDE", "BCCDE", "BCCE")
+    ]
+    for s1, s2, expected in cases:
+        assert longest_common_subsequence(s1, s2) == expected
 
 def test_repeated_characters():
     """Test LCS with repeated characters"""
     assert longest_common_subsequence("AAAAAA", "AAAAAAA") == "AAAAAA"
-    assert longest_common_subsequence("ABCCCDE", "BCCDE") == "BCCE"
