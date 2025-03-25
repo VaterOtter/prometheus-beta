@@ -21,33 +21,38 @@ def find_longest_parity_subsequence(arr):
     if not arr:
         return []
     
-    # Initialize variables to track subsequences
+    # Track best subsequences for even and odd numbers 
     max_even_seq = []
     max_odd_seq = []
     
-    # Current working subsequences
+    # Variables to help track the current sequences
     current_even_seq = []
     current_odd_seq = []
     
     for num in arr:
-        # Even number processing
+        # Check and handle even and odd subsequences
         if num % 2 == 0:
-            # Continue or start even sequence
-            current_even_seq.append(num)
-            # Reset odd sequence
+            # If the previous sequence was not even, reset
+            if not current_even_seq or (current_even_seq and arr[arr.index(num)-1] % 2 != 0):
+                current_even_seq = [num]
+            else:
+                current_even_seq.append(num)
+            
+            # Reset the odd sequence
             current_odd_seq = []
         else:
-            # Continue or start odd sequence
-            current_odd_seq.append(num)
-            # Reset even sequence
+            # If the previous sequence was not odd, reset
+            if not current_odd_seq or (current_odd_seq and arr[arr.index(num)-1] % 2 == 0):
+                current_odd_seq = [num]
+            else:
+                current_odd_seq.append(num)
+            
+            # Reset the even sequence
             current_even_seq = []
         
-        # Update max sequences if current sequences are longer
-        if len(current_even_seq) > len(max_even_seq):
-            max_even_seq = current_even_seq.copy()
-        
-        if len(current_odd_seq) > len(max_odd_seq):
-            max_odd_seq = current_odd_seq.copy()
+        # Update max sequences
+        max_even_seq = max(max_even_seq, current_even_seq, key=len)
+        max_odd_seq = max(max_odd_seq, current_odd_seq, key=len)
     
-    # Return the longer subsequence
+    # Return the longer subsequence, preferring even if equal
     return max_even_seq if len(max_even_seq) >= len(max_odd_seq) else max_odd_seq
