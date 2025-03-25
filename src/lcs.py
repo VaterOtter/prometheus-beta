@@ -2,6 +2,11 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
     """
     Find the longest common subsequence between two strings using dynamic programming.
     
+    The function is case-sensitive and ensures:
+    1. Proper order of characters
+    2. Handles repeated characters correctly
+    3. Returns the longest common subsequence
+    
     Args:
         str1 (str): First input string
         str2 (str): Second input string
@@ -33,17 +38,39 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
                 dp[i][j] = max(dp[i-1][j], dp[i][j-1])
     
     # Backtrack to find the LCS
-    lcs = []
-    i, j = m, n
-    while i > 0 and j > 0:
-        if str1[i-1] == str2[j-1]:
-            lcs.append(str1[i-1])
-            i -= 1
-            j -= 1
-        elif dp[i-1][j] > dp[i][j-1]:
-            i -= 1
-        else:
-            j -= 1
+    def get_lcs_candidates(matrix, s1, s2):
+        """Generate all possible LCS with equal lengths."""
+        def backtrack(i, j, current_lcs):
+            # Backtracking stops
+            if i == 0 or j == 0:
+                return [current_lcs[::-1]]
+            
+            # Match found
+            if s1[i-1] == s2[j-1]:
+                candidates = backtrack(i-1, j-1, current_lcs + s1[i-1])
+                
+                # Also explore other paths if the current length is maintained
+                if dp[i][j] == dp[i-1][j]:
+                    candidates.extend(backtrack(i-1, j, current_lcs))
+                if dp[i][j] == dp[i][j-1]:
+                    candidates.extend(backtrack(i, j-1, current_lcs))
+                
+                return candidates
+            
+            # No match, explore paths maintaining length
+            candidates = []
+            if dp[i-1][j] > dp[i][j-1]:
+                candidates.extend(backtrack(i-1, j, current_lcs))
+            else:
+                candidates.extend(backtrack(i, j-1, current_lcs))
+            
+            return candidates
+        
+        # Get all LCS candidates and filter to max length
+        candidates = backtrack(len(s1), len(s2), '')
+        max_length = len(max(candidates, key=len))
+        return [lcs for lcs in candidates if len(lcs) == max_length]
     
-    # Return the reversed LCS as a string
-    return ''.join(reversed(lcs))
+    # Get all possible longest common subsequences and choose lexicographically first
+    lcs_candidates = get_lcs_candidates(dp, str1, str2)
+    return min(lcs_candidates) if lcs_candidates else ""
