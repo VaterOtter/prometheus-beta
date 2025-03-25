@@ -21,30 +21,34 @@ def find_longest_parity_subsequence(arr):
     if not arr:
         return []
     
-    # Track subsequences of different parities
-    max_even_seq = []
-    max_odd_seq = []
+    # Tracking subsequences
+    longest_even_seq = []
+    longest_odd_seq = []
     
-    # Scan the entire array to find parity subsequences
+    # Systematic approach to find parity subsequences
+    n = len(arr)
     for is_even in [True, False]:
-        # Check each possible starting point 
-        for start in range(len(arr)):
-            # Temporary subsequence to track contiguous parity elements 
-            temp_seq = []
+        # Try every possible starting point
+        for start in range(n):
+            current_seq = []
             
-            # Scan from the starting point
-            for num in arr[start:]:
-                # Condition for maintaining parity
-                if (is_even and num % 2 == 0) or (not is_even and num % 2 != 0):
-                    temp_seq.append(num)
-                else:
-                    break
+            # Scan forward from the starting point
+            for j in range(start, n):
+                # Check if number matches desired parity
+                if (is_even and arr[j] % 2 == 0) or (not is_even and arr[j] % 2 != 0):
+                    current_seq.append(arr[j])
+                    
+                    # If the parity changes, break 
+                    if not ((is_even and arr[j] % 2 == 0) or (not is_even and arr[j] % 2 != 0)):
+                        break
             
-            # Update max subsequence for even or odd 
+            # Update the max subsequence
             if is_even:
-                max_even_seq = max(max_even_seq, temp_seq, key=len)
+                if len(current_seq) > len(longest_even_seq):
+                    longest_even_seq = current_seq
             else:
-                max_odd_seq = max(max_odd_seq, temp_seq, key=len)
+                if len(current_seq) > len(longest_odd_seq):
+                    longest_odd_seq = current_seq
     
-    # Prefer even subsequence if lengths are equal
-    return max_even_seq if len(max_even_seq) >= len(max_odd_seq) else max_odd_seq
+    # Prefer even sequence on equal length
+    return longest_even_seq if len(longest_even_seq) >= len(longest_odd_seq) else longest_odd_seq
