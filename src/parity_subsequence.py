@@ -21,34 +21,34 @@ def find_longest_parity_subsequence(arr):
     if not arr:
         return []
     
+    # Initial candidates for subsequences
     max_even_seq = []
     max_odd_seq = []
     
-    # Sliding window approach
-    for start in range(len(arr)):
-        # Even subsequence
-        current_even_seq = []
-        for num in arr[start:]:
-            if num % 2 == 0:
-                current_even_seq.append(num)
+    # Two-pass scanning approach
+    for is_even in [True, False]:
+        current_seq = []
+        best_seq = []
+        
+        for num in arr:
+            # Determine correct parity based on the flag
+            if (is_even and num % 2 == 0) or (not is_even and num % 2 != 0):
+                current_seq.append(num)
             else:
-                break
+                # Keep track of the best subsequence
+                if len(current_seq) > len(best_seq):
+                    best_seq = current_seq
+                current_seq = []
         
-        # Update max even subsequence
-        if len(current_even_seq) > len(max_even_seq):
-            max_even_seq = current_even_seq
+        # Final check for the last subsequence
+        if len(current_seq) > len(best_seq):
+            best_seq = current_seq
         
-        # Odd subsequence
-        current_odd_seq = []
-        for num in arr[start:]:
-            if num % 2 != 0:
-                current_odd_seq.append(num)
-            else:
-                break
-        
-        # Update max odd subsequence
-        if len(current_odd_seq) > len(max_odd_seq):
-            max_odd_seq = current_odd_seq
+        # Update max sequences
+        if is_even:
+            max_even_seq = best_seq
+        else:
+            max_odd_seq = best_seq
     
     # Prefer even sequence if lengths are equal
     return max_even_seq if len(max_even_seq) >= len(max_odd_seq) else max_odd_seq
