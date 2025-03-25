@@ -85,7 +85,7 @@ def test_fractional_weights():
     
     assert total_value == 180
     assert len(selected_items) == 2
-    assert {(item.weight, item.value) for item in selected_items} == {(20.2, 100), (30.7, 120)}
+    assert {(item.weight, item.value) for item in selected_items} == {(10.5, 60), (30.7, 120)}
 
 def test_complex_knapsack_scenario():
     """Test a more complex knapsack scenario with multiple possible combinations."""
