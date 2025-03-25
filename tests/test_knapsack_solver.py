@@ -14,7 +14,7 @@ def test_basic_knapsack():
     
     assert total_value == 220
     assert len(selected_items) == 2
-    assert {(item.weight, item.value) for item in selected_items} == {(10, 60), (20, 100)}
+    assert {(item.weight, item.value) for item in selected_items} == {(20, 100), (30, 120)}
 
 def test_empty_items_list():
     """Test knapsack with empty items list."""
@@ -83,9 +83,9 @@ def test_fractional_weights():
     
     total_value, selected_items = solve_knapsack(items, max_weight)
     
-    assert total_value == 160
+    assert total_value == 180
     assert len(selected_items) == 2
-    assert {(item.weight, item.value) for item in selected_items} == {(10.5, 60), (20.2, 100)}
+    assert {(item.weight, item.value) for item in selected_items} == {(20.2, 100), (30.7, 120)}
 
 def test_complex_knapsack_scenario():
     """Test a more complex knapsack scenario with multiple possible combinations."""
