@@ -41,18 +41,34 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
             else:
                 dp[i][j] = max(dp[i-1][j], dp[i][j-1])
     
-    # Backtrack to find the LCS
-    lcs = []
-    i, j = m, n
-    while i > 0 and j > 0:
-        if str1[i-1] == str2[j-1]:
-            lcs.append(str1[i-1])
-            i -= 1
-            j -= 1
-        elif dp[i-1][j] > dp[i][j-1]:
-            i -= 1
-        else:
-            j -= 1
+    # Generate multiple LCS candidates
+    def backtrack_lcs_candidates(matrix, s1, s2, length):
+        candidates = set()
+        
+        def _backtrack(i, j, current_lcs):
+            # Backtracking stops
+            if len(current_lcs) == length:
+                candidates.add(current_lcs[::-1])
+                return
+            
+            # Match found
+            if i > 0 and j > 0 and s1[i-1] == s2[j-1]:
+                _backtrack(i-1, j-1, current_lcs + s1[i-1])
+            
+            # Non-matching paths
+            if i > 0 and (j == 0 or matrix[i-1][j] >= matrix[i][j-1]):
+                _backtrack(i-1, j, current_lcs)
+            if j > 0 and (i == 0 or matrix[i][j-1] >= matrix[i-1][j]):
+                _backtrack(i, j-1, current_lcs)
+        
+        _backtrack(len(s1), len(s2), '')
+        return sorted(candidates)
     
-    # Return the reversed LCS as a string
-    return ''.join(reversed(lcs))
+    # Get the length of LCS
+    lcs_length = dp[m][n]
+    
+    # Get all candidates of exact max length
+    lcs_candidates = backtrack_lcs_candidates(dp, str1, str2, lcs_length)
+    
+    # Return lexicographically first if available
+    return lcs_candidates[0] if lcs_candidates else ""
