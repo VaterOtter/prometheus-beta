@@ -31,20 +31,14 @@ def bead_sort(arr):
     max_num = max(arr) if arr else 0
     
     # Create abacus-like representation
-    abacus = [[1 if x > row else 0 for x in arr] for row in range(max_num)]
+    abacus = [[1 if num > row else 0 for num in arr] for row in range(max_num + 1)]
     
     # Let beads "fall"
-    for row in range(max_num):
-        # Count beads in each column
-        column_counts = [sum(abacus[r][col] for r in range(max_num)) for col in range(len(arr))]
-        
-        # Reset the abacus row
-        abacus[row] = [1 if column_counts[col] > row else 0 for col in range(len(arr))]
-    
-    # Reconstruct the sorted array
-    sorted_arr = [
-        sum(abacus[row][col] for row in range(max_num)) 
-        for col in range(len(arr))
-    ]
+    sorted_arr = []
+    for col in range(len(arr)):
+        # Count beads in this column
+        bead_count = sum(abacus[row][col] for row in range(max_num + 1))
+        # Add the number of beads as multiple elements
+        sorted_arr.extend([col] * bead_count)
     
     return sorted_arr
