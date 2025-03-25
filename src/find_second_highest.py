@@ -20,12 +20,22 @@ def find_second_highest(sorted_list):
     if len(sorted_list) == 0:
         raise ValueError("List cannot be empty")
     
-    # Remove duplicates while preserving order
-    unique_values = list(dict.fromkeys(sorted_list))
+    # Remove duplicates while preserving the order of the original list
+    unique_values = []
+    seen = set()
+    for value in sorted_list:
+        if value not in seen:
+            unique_values.append(value)
+            seen.add(value)
     
     # Check if there are at least two unique values
     if len(unique_values) < 2:
         return None
     
-    # Return the second highest value
-    return unique_values[-2]
+    # Determine the order and return the second highest
+    if unique_values[0] < unique_values[-1]:
+        # Ascending order
+        return unique_values[-2]
+    else:
+        # Descending order
+        return unique_values[1]
