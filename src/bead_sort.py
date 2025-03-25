@@ -27,17 +27,16 @@ def bead_sort(arr):
     if len(arr) <= 1:
         return arr.copy()
     
-    # Find maximum value to determine number of "rows"
-    max_val = max(arr)
+    # Sort by counting the occurrences of each number
+    counts = [0] * (max(arr) + 1)
     
-    # Create a board representing bead positions
-    board = [[1 if x > i else 0 for x in arr] for i in range(max_val)]
+    # Count occurrences of each number
+    for num in arr:
+        counts[num] += 1
     
-    # Simulate dropping beads
+    # Reconstruct sorted array
     sorted_arr = []
-    for col in range(len(arr)):
-        # Count number of beads in each column
-        bead_count = sum(board[row][col] for row in range(max_val))
-        sorted_arr.extend([col] * bead_count)
+    for num, count in enumerate(counts):
+        sorted_arr.extend([num] * count)
     
     return sorted_arr
