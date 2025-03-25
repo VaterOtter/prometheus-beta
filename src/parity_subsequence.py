@@ -22,24 +22,40 @@ def find_longest_parity_subsequence(arr):
         return []
     
     # Track subsequences of even and odd numbers
-    max_length = 0
-    max_subsequence = []
+    max_even_seq = []
+    max_odd_seq = []
     
-    # Try generating subsequences starting from each index
-    for start in range(len(arr)):
-        # Check even and odd subsequences
-        for parity_func in [lambda x: x % 2 == 0, lambda x: x % 2 != 0]:
-            subsequence = []
-            # Attempt to generate a subsequence
-            for num in arr[start:]:
-                if parity_func(num):
-                    subsequence.append(num)
-                else:
-                    break
+    # Current subsequences
+    current_even_seq = []
+    current_odd_seq = []
+    
+    for i, num in enumerate(arr):
+        # Check if the number is even or odd
+        if num % 2 == 0:
+            # Reset odd sequence
+            current_odd_seq = []
             
-            # Update max subsequence if current is longer
-            if len(subsequence) > max_length:
-                max_length = len(subsequence)
-                max_subsequence = subsequence
+            # Update even sequence
+            if not current_even_seq or (i > 0 and arr[i-1] % 2 == 0):
+                current_even_seq.append(num)
+            else:
+                current_even_seq = [num]
+        else:
+            # Reset even sequence
+            current_even_seq = []
+            
+            # Update odd sequence
+            if not current_odd_seq or (i > 0 and arr[i-1] % 2 != 0):
+                current_odd_seq.append(num)
+            else:
+                current_odd_seq = [num]
+        
+        # Update max sequences
+        if len(current_even_seq) > len(max_even_seq):
+            max_even_seq = current_even_seq.copy()
+        
+        if len(current_odd_seq) > len(max_odd_seq):
+            max_odd_seq = current_odd_seq.copy()
     
-    return max_subsequence
+    # Return the longer subsequence, preferring even if equal
+    return max_even_seq if len(max_even_seq) >= len(max_odd_seq) else max_odd_seq
