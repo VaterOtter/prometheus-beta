@@ -21,38 +21,25 @@ def find_longest_parity_subsequence(arr):
     if not arr:
         return []
     
-    # Track best subsequences for even and odd numbers 
-    max_even_seq = []
-    max_odd_seq = []
+    # Track subsequences of even and odd numbers
+    max_length = 0
+    max_subsequence = []
     
-    # Variables to help track the current sequences
-    current_even_seq = []
-    current_odd_seq = []
-    
-    for num in arr:
-        # Check and handle even and odd subsequences
-        if num % 2 == 0:
-            # If the previous sequence was not even, reset
-            if not current_even_seq or (current_even_seq and arr[arr.index(num)-1] % 2 != 0):
-                current_even_seq = [num]
-            else:
-                current_even_seq.append(num)
+    # Try generating subsequences starting from each index
+    for start in range(len(arr)):
+        # Check even and odd subsequences
+        for parity_func in [lambda x: x % 2 == 0, lambda x: x % 2 != 0]:
+            subsequence = []
+            # Attempt to generate a subsequence
+            for num in arr[start:]:
+                if parity_func(num):
+                    subsequence.append(num)
+                else:
+                    break
             
-            # Reset the odd sequence
-            current_odd_seq = []
-        else:
-            # If the previous sequence was not odd, reset
-            if not current_odd_seq or (current_odd_seq and arr[arr.index(num)-1] % 2 == 0):
-                current_odd_seq = [num]
-            else:
-                current_odd_seq.append(num)
-            
-            # Reset the even sequence
-            current_even_seq = []
-        
-        # Update max sequences
-        max_even_seq = max(max_even_seq, current_even_seq, key=len)
-        max_odd_seq = max(max_odd_seq, current_odd_seq, key=len)
+            # Update max subsequence if current is longer
+            if len(subsequence) > max_length:
+                max_length = len(subsequence)
+                max_subsequence = subsequence
     
-    # Return the longer subsequence, preferring even if equal
-    return max_even_seq if len(max_even_seq) >= len(max_odd_seq) else max_odd_seq
+    return max_subsequence
