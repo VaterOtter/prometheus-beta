@@ -37,17 +37,19 @@ def find_longest_parity_subsequence(arr):
                 # Check if number matches desired parity
                 if (is_even and arr[j] % 2 == 0) or (not is_even and arr[j] % 2 != 0):
                     current_seq.append(arr[j])
-                    
-                    # If the parity changes, break 
-                    if not ((is_even and arr[j] % 2 == 0) or (not is_even and arr[j] % 2 != 0)):
-                        break
+                else:
+                    break
             
             # Update the max subsequence
             if is_even:
-                if len(current_seq) > len(longest_even_seq):
+                # Prefer the first occurring subsequence
+                if len(current_seq) > len(longest_even_seq) or \
+                   (len(current_seq) == len(longest_even_seq) and start < arr.index(longest_even_seq[0]) if longest_even_seq else False):
                     longest_even_seq = current_seq
             else:
-                if len(current_seq) > len(longest_odd_seq):
+                # Prefer the first occurring subsequence
+                if len(current_seq) > len(longest_odd_seq) or \
+                   (len(current_seq) == len(longest_odd_seq) and start < arr.index(longest_odd_seq[0]) if longest_odd_seq else False):
                     longest_odd_seq = current_seq
     
     # Prefer even sequence on equal length
