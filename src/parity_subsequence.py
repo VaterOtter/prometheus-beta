@@ -21,41 +21,34 @@ def find_longest_parity_subsequence(arr):
     if not arr:
         return []
     
-    # Track subsequences of even and odd numbers
     max_even_seq = []
     max_odd_seq = []
     
-    # Current subsequences
-    current_even_seq = []
-    current_odd_seq = []
-    
-    for i, num in enumerate(arr):
-        # Check if the number is even or odd
-        if num % 2 == 0:
-            # Reset odd sequence
-            current_odd_seq = []
-            
-            # Update even sequence
-            if not current_even_seq or (i > 0 and arr[i-1] % 2 == 0):
+    # Sliding window approach
+    for start in range(len(arr)):
+        # Even subsequence
+        current_even_seq = []
+        for num in arr[start:]:
+            if num % 2 == 0:
                 current_even_seq.append(num)
             else:
-                current_even_seq = [num]
-        else:
-            # Reset even sequence
-            current_even_seq = []
-            
-            # Update odd sequence
-            if not current_odd_seq or (i > 0 and arr[i-1] % 2 != 0):
+                break
+        
+        # Update max even subsequence
+        if len(current_even_seq) > len(max_even_seq):
+            max_even_seq = current_even_seq
+        
+        # Odd subsequence
+        current_odd_seq = []
+        for num in arr[start:]:
+            if num % 2 != 0:
                 current_odd_seq.append(num)
             else:
-                current_odd_seq = [num]
+                break
         
-        # Update max sequences
-        if len(current_even_seq) > len(max_even_seq):
-            max_even_seq = current_even_seq.copy()
-        
+        # Update max odd subsequence
         if len(current_odd_seq) > len(max_odd_seq):
-            max_odd_seq = current_odd_seq.copy()
+            max_odd_seq = current_odd_seq
     
-    # Return the longer subsequence, preferring even if equal
+    # Prefer even sequence if lengths are equal
     return max_even_seq if len(max_even_seq) >= len(max_odd_seq) else max_odd_seq
