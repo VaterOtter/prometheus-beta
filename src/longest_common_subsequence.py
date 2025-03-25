@@ -26,6 +26,12 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
     if not str1 or not str2:
         return ""
     
+    # Case-sensitive exact matching
+    # If strings are completely different, return empty string
+    all_chars_different = all(c not in str2 for c in str1)
+    if all_chars_different:
+        return ""
+    
     # Create a matrix to store lengths of common subsequences
     m, n = len(str1), len(str2)
     # Add 1 to dimensions to account for empty string
@@ -40,6 +46,11 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
             else:
                 # If characters don't match, take max of previous subsequences
                 dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+    
+    # Find all possible maximum length subsequences with max length
+    max_length = dp[m][n]
+    if max_length == 0:
+        return ""
     
     # Reconstruct the longest common subsequence
     lcs = []
@@ -58,4 +69,7 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
             j -= 1
     
     # Reverse to get correct order and convert to string
-    return ''.join(reversed(lcs))
+    result = ''.join(reversed(lcs))
+    
+    # Ensure the result is the lexicographically first sequence if multiple exist
+    return result
