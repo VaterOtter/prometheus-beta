@@ -49,4 +49,4 @@ def find_palindromic_substrings(s: str) -> list:
         # Even length palindromes (two character center)
         expand_around_center(i, i+1)
     
-    return sorted(list(palindromes))
+    return sorted(list(palindromes), key=lambda x: (len(x), x))
