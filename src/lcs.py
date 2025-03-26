@@ -42,32 +42,17 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
                 dp[i][j] = max(dp[i-1][j], dp[i][j-1])
     
     # Backtrack to find the LCS
-    def backtrack_lcs(matrix, s1, s2):
-        """Generate LCS candidates, preferring lexicographically early subsequences."""
-        def dfs(i, j, current_lcs, max_length):
-            # Stop conditions
-            if len(current_lcs) == max_length:
-                return [current_lcs[::-1]]
-            
-            candidates = []
-            
-            # Prefer lexicographically early paths
-            if i > 0 and j > 0 and s1[i-1] == s2[j-1]:
-                candidates.extend(dfs(i-1, j-1, current_lcs + s1[i-1], max_length))
-            
-            # Non-match paths
-            if i > 0 and matrix[i-1][j] >= matrix[i][j-1]:
-                candidates.extend(dfs(i-1, j, current_lcs, max_length))
-            
-            if j > 0 and matrix[i][j-1] >= matrix[i-1][j]:
-                candidates.extend(dfs(i, j-1, current_lcs, max_length))
-            
-            return candidates
-        
-        max_length = matrix[len(s1)][len(s2)]
-        all_candidates = dfs(len(s1), len(s2), '', max_length)
-        
-        # Sort and return first (lexicographically earliest)
-        return sorted(set(all_candidates))[0] if all_candidates else ""
+    lcs = []
+    i, j = m, n
+    while i > 0 and j > 0:
+        if str1[i-1] == str2[j-1]:
+            lcs.append(str1[i-1])
+            i -= 1
+            j -= 1
+        elif dp[i-1][j] > dp[i][j-1]:
+            i -= 1
+        else:
+            j -= 1
     
-    return backtrack_lcs(dp, str1, str2)
+    # Return the reversed LCS as a string
+    return ''.join(reversed(lcs))
