@@ -41,34 +41,33 @@ def longest_common_subsequence(str1: str, str2: str) -> str:
             else:
                 dp[i][j] = max(dp[i-1][j], dp[i][j-1])
     
-    # Generate multiple LCS candidates
-    def backtrack_lcs_candidates(matrix, s1, s2, length):
-        candidates = set()
-        
-        def _backtrack(i, j, current_lcs):
-            # Backtracking stops
-            if len(current_lcs) == length:
-                candidates.add(current_lcs[::-1])
-                return
+    # Backtrack to find the LCS
+    def backtrack_lcs(matrix, s1, s2):
+        """Generate LCS candidates, preferring lexicographically early subsequences."""
+        def dfs(i, j, current_lcs, max_length):
+            # Stop conditions
+            if len(current_lcs) == max_length:
+                return [current_lcs[::-1]]
             
-            # Match found
+            candidates = []
+            
+            # Prefer lexicographically early paths
             if i > 0 and j > 0 and s1[i-1] == s2[j-1]:
-                _backtrack(i-1, j-1, current_lcs + s1[i-1])
+                candidates.extend(dfs(i-1, j-1, current_lcs + s1[i-1], max_length))
             
-            # Non-matching paths
-            if i > 0 and (j == 0 or matrix[i-1][j] >= matrix[i][j-1]):
-                _backtrack(i-1, j, current_lcs)
-            if j > 0 and (i == 0 or matrix[i][j-1] >= matrix[i-1][j]):
-                _backtrack(i, j-1, current_lcs)
+            # Non-match paths
+            if i > 0 and matrix[i-1][j] >= matrix[i][j-1]:
+                candidates.extend(dfs(i-1, j, current_lcs, max_length))
+            
+            if j > 0 and matrix[i][j-1] >= matrix[i-1][j]:
+                candidates.extend(dfs(i, j-1, current_lcs, max_length))
+            
+            return candidates
         
-        _backtrack(len(s1), len(s2), '')
-        return sorted(candidates)
+        max_length = matrix[len(s1)][len(s2)]
+        all_candidates = dfs(len(s1), len(s2), '', max_length)
+        
+        # Sort and return first (lexicographically earliest)
+        return sorted(set(all_candidates))[0] if all_candidates else ""
     
-    # Get the length of LCS
-    lcs_length = dp[m][n]
-    
-    # Get all candidates of exact max length
-    lcs_candidates = backtrack_lcs_candidates(dp, str1, str2, lcs_length)
-    
-    # Return lexicographically first if available
-    return lcs_candidates[0] if lcs_candidates else ""
+    return backtrack_lcs(dp, str1, str2)
